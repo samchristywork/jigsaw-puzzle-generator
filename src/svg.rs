@@ -1,3 +1,6 @@
+use crate::transform::Transform;
+use crate::vector::Vector;
+
 fn draw_control_point(x: f32, y: f32) {
     let stroke = 0.01;
     println!(
@@ -9,13 +12,33 @@ fn draw_control_point(x: f32, y: f32) {
     );
 }
 
-pub fn draw_control_points(a: f32, b: f32, c: f32, d: f32, e: f32, f: f32) {
+pub fn draw_control_points(t: &Transform, mut x: Vector, mut y: Vector, mut z: Vector) {
+    x = t.apply(x);
+    y = t.apply(y);
+    z = t.apply(z);
+
+    let a = x.x;
+    let b = x.y;
+    let c = y.x;
+    let d = y.y;
+    let e = z.x;
+    let f = z.y;
     draw_control_point(a, b);
     draw_control_point(c, d);
     draw_control_point(e, f);
 }
 
-pub fn draw_quadratic_curve(a: f32, b: f32, c: f32, d: f32, e: f32, f: f32) {
+pub fn draw_quadratic_curve(t: &Transform, mut x: Vector, mut y: Vector, mut z: Vector) {
+    x = t.apply(x);
+    y = t.apply(y);
+    z = t.apply(z);
+
+    let a = x.x;
+    let b = x.y;
+    let c = y.x;
+    let d = y.y;
+    let e = z.x;
+    let f = z.y;
     println!("C{a},{b} {c},{d} {e},{f} ");
 }
 
@@ -27,7 +50,12 @@ pub fn path_end(fill: &str, stroke: &str, stroke_width: f32) {
     println!("Z\" fill=\"{fill}\" stroke=\"{stroke}\" stroke-width=\"{stroke_width}\" />");
 }
 
-pub fn move_to(a: f32, b: f32) {
+pub fn move_to(t: &Transform, mut v: Vector) {
+    v = t.apply(v);
+
+    let a = v.x;
+    let b = v.y;
+
     println!("M{a},{b} ");
 }
 
@@ -35,7 +63,12 @@ pub fn svg_start(width: f32, height: f32) {
     println!("<svg viewBox=\"0 0 {width} {height}\" xmlns=\"http://www.w3.org/2000/svg\">");
 }
 
-pub fn line_to(x: f32, y: f32) {
+pub fn line_to(t: &Transform, mut v: Vector) {
+    v = t.apply(v);
+
+    let x = v.x;
+    let y = v.y;
+
     println!("L{x}, {y}");
 }
 
