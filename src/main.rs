@@ -13,7 +13,29 @@ fn main() {
 
     svg::svg_start(width, height);
 
-    let t = transform::Transform { operations: vec![] };
+    let t = transform::Transform {
+        operations: vec![
+            Operation {
+                kind: transform::Kind::Offset,
+                v: Vector { x: -0.5, y: -0.5 },
+            },
+            Operation {
+                kind: transform::Kind::Rotate,
+                v: Vector {
+                    x: 3.141 / 2.0,
+                    y: 0.0,
+                },
+            },
+            Operation {
+                kind: transform::Kind::Offset,
+                v: Vector { x: 0.5, y: 0.5 },
+            },
+            Operation {
+                kind: transform::Kind::Scale,
+                v: Vector { x: 0.5, y: 1.0 },
+            },
+        ],
+    };
 
     svg::path_begin();
     svg::move_to(&t, Vector { x: 0.00, y: 0.50 });
