@@ -1,4 +1,4 @@
-![Banner](https://s-christy.com/status-banner-service/arithmetic-expression-parser/banner-slim.svg)
+![Banner](https://s-christy.com/status-banner-service/jigsaw-puzzle-generator/banner-slim.svg)
 
 ## Overview
 
