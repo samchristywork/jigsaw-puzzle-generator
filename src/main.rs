@@ -41,7 +41,7 @@ fn draw_side_variant(t: transform::Transform, seed: i32) -> Piece {
     (seed + salt).hash(&mut hasher);
     let hash = hasher.finish();
 
-    let mut inverted = 0.0;
+    let mut inverted = -1.0;
     if hash % 2 == 0 {
         inverted = 1.0;
     }
@@ -51,26 +51,29 @@ fn draw_side_variant(t: transform::Transform, seed: i32) -> Piece {
         Vector { x: 0.50, y: 0.50 }, // 1
         Vector {
             x: 0.25,
-            y: 0.25 + 0.50 * inverted,
+            y: 0.50 + 0.25 * inverted,
         }, // 2
         Vector {
             x: 0.00,
-            y: 0.00 + inverted,
+            y: 0.50 + 0.50 * inverted,
         }, // 3
         Vector {
             x: 1.00,
-            y: 0.00 + inverted,
+            y: 0.50 + 0.50 * inverted,
         }, // 4
         Vector {
             x: 0.75,
-            y: 0.25 + 0.50 * inverted,
+            y: 0.50 + 0.25 * inverted,
         }, // 5
         Vector { x: 0.50, y: 0.50 }, // 6
         Vector { x: 0.75, y: 0.50 }, // 7
         Vector { x: 1.50, y: 0.50 }, // 8
     ];
 
-    let skew = Vector { x: 0.2, y: -0.1 };
+    let skew = Vector {
+        x: 0.2 * inverted,
+        y: -0.2 * inverted,
+    };
     points[1] += skew;
     points[2] += skew;
     points[3] += skew;
