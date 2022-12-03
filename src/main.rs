@@ -169,9 +169,17 @@ fn main() {
         operations: t.operations.clone(),
     }));
 
-    for point in piece.control_points.clone() {
+    for (i, point) in piece.control_points.clone().iter().enumerate() {
         let sz = 0.01;
-        piece.add_string(svg::draw_box(point.x, point.y, sz, sz, stroke));
+        piece.add_string(svg::draw_box_with_label(
+            point.x,
+            point.y,
+            sz,
+            sz,
+            stroke,
+            "red",
+            i.to_string().as_str(),
+        ));
     }
 
     //t.operations.push(Operation {
@@ -183,7 +191,7 @@ fn main() {
     //    operations: t.operations.clone(),
     //});
 
-    piece.add_string(svg::draw_box(0.0, 0.0, 1.0, 1.0, stroke));
+    piece.add_string(svg::draw_box(0.0, 0.0, 1.0, 1.0, stroke, "black"));
 
     piece.add_string(svg::svg_end());
 

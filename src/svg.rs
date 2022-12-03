@@ -64,8 +64,8 @@ pub fn move_to(t: &Transform, mut v: Vector) -> String {
     format!("M{a},{b} ")
 }
 
-pub fn svg_start(width: f32, height: f32) -> String {
-    format!("<svg viewBox=\"0 0 {width} {height}\" xmlns=\"http://www.w3.org/2000/svg\">")
+pub fn svg_start(x: f32, y: f32, width: f32, height: f32) -> String {
+    format!("<svg viewBox=\"{x} {y} {width} {height}\" xmlns=\"http://www.w3.org/2000/svg\">")
 }
 
 pub fn line_to(t: &Transform, mut v: Vector) -> String {
@@ -77,10 +77,26 @@ pub fn line_to(t: &Transform, mut v: Vector) -> String {
     format!("L{x}, {y}")
 }
 
-pub fn draw_box(x: f32, y: f32, width: f32, height: f32, stroke: f32) -> String {
+pub fn draw_box(x: f32, y: f32, width: f32, height: f32, stroke: f32, color: &str) -> String {
     format!(
         "<path d=\"M{x},{y} l0,{height} l{width},0 l0,-{height} z\" \
-        fill=\"none\" stroke=\"black\" stroke-width=\"{stroke}\"/>"
+        fill=\"none\" stroke=\"{color}\" stroke-width=\"{stroke}\"/>"
+    )
+}
+
+pub fn draw_box_with_label(
+    x: f32,
+    y: f32,
+    width: f32,
+    height: f32,
+    stroke: f32,
+    color: &str,
+    label: &str,
+) -> String {
+    format!(
+        "<path d=\"M{x},{y} l0,{height} l{width},0 l0,-{height} z\" \
+        fill=\"none\" stroke=\"{color}\" stroke-width=\"{stroke}\"/> \
+        <text x=\"{x}\" y=\"{y}\" font-size=\".04\">{label}</text>"
     )
 }
 
