@@ -7,7 +7,9 @@ use std::hash::{Hash, Hasher};
 use transform::Operation;
 use vector::Vector;
 
-fn draw_side_variant(t: transform::Transform, mut seed: i32) {
+fn draw_side_variant(t: transform::Transform, mut seed: i32) -> String {
+    let mut res = String::new();
+
     let salt = 125;
     seed += salt;
 
@@ -20,7 +22,7 @@ fn draw_side_variant(t: transform::Transform, mut seed: i32) {
         inverted = 1.0;
     }
 
-    svg::draw_quadratic_curve(
+    res += svg::draw_quadratic_curve(
         &t,
         Vector { x: 0.25, y: 0.50 },
         Vector { x: 0.50, y: 0.50 },
@@ -28,8 +30,10 @@ fn draw_side_variant(t: transform::Transform, mut seed: i32) {
             x: 0.25,
             y: 0.25 + 0.50 * inverted,
         },
-    );
-    svg::draw_quadratic_curve(
+    )
+    .as_str();
+
+    res += svg::draw_quadratic_curve(
         &t,
         Vector {
             x: 0.00,
@@ -42,21 +46,28 @@ fn draw_side_variant(t: transform::Transform, mut seed: i32) {
         Vector {
             x: 0.75,
             y: 0.25 + 0.50 * inverted,
-        }, //75
-    );
-    svg::draw_quadratic_curve(
+        },
+    )
+    .as_str();
+
+    res += svg::draw_quadratic_curve(
         &t,
         Vector { x: 0.50, y: 0.50 },
         Vector { x: 0.75, y: 0.50 },
         Vector { x: 1.50, y: 0.50 },
-    );
+    )
+    .as_str();
+
+    res
 }
 
-fn make_piece(mut t: transform::Transform) {
+fn make_piece(mut t: transform::Transform) -> String {
+    let mut res = String::new();
+
     let stroke = 0.01;
 
-    svg::path_begin();
-    svg::move_to(&t, Vector { x: 0.00, y: 0.50 });
+    res += svg::path_begin().as_str();
+    res += svg::move_to(&t, Vector { x: 0.00, y: 0.50 }).as_str();
 
     let oldops = t.operations.clone();
     for i in 0..4 {
@@ -88,10 +99,10 @@ fn make_piece(mut t: transform::Transform) {
         let s = transform::Transform {
             operations: t.operations.clone(),
         };
-        draw_side_variant(s, i);
+        res += draw_side_variant(s, i).as_str();
     }
 
-    svg::path_end("blue", "black", stroke);
+    res += svg::path_end("blue", "black", stroke).as_str();
 
     //svg::draw_control_points(
     //    &t,
@@ -111,6 +122,8 @@ fn make_piece(mut t: transform::Transform) {
     //    Vector { x: 0.75, y: 0.50 },
     //    Vector { x: 1.00, y: 0.50 },
     //);
+
+    res
 }
 
 fn main() {
@@ -118,7 +131,8 @@ fn main() {
     let height = 1.01;
     let stroke = 0.01;
 
-    svg::svg_start(width, height);
+    let mut s = String::new();
+    s += svg::svg_start(width, height).as_str();
 
     let t = transform::Transform {
         operations: vec![
@@ -133,9 +147,10 @@ fn main() {
         ],
     };
 
-    make_piece(transform::Transform {
+    s += make_piece(transform::Transform {
         operations: t.operations.clone(),
-    });
+    })
+    .as_str();
 
     //t.operations.push(Operation {
     //    kind: transform::Kind::Offset,
@@ -146,7 +161,9 @@ fn main() {
     //    operations: t.operations.clone(),
     //});
 
-    svg::draw_box(0.0, 0.0, 1.0, 1.0, stroke);
+    s += svg::draw_box(0.0, 0.0, 1.0, 1.0, stroke).as_str();
 
-    svg::svg_end();
+    s += svg::svg_end().as_str();
+
+    println!("{}", s);
 }
