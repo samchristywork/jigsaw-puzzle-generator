@@ -2,8 +2,55 @@ pub mod svg;
 pub mod transform;
 pub mod vector;
 
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 use transform::Operation;
 use vector::Vector;
+
+fn draw_side_variant(t: transform::Transform, mut seed: i32) {
+    let salt = 125;
+    seed += salt;
+
+    let mut hasher = DefaultHasher::new();
+    seed.hash(&mut hasher);
+    let hash = hasher.finish();
+
+    let mut inverted = 0.0;
+    if hash % 2 == 0 {
+        inverted = 1.0;
+    }
+
+    svg::draw_quadratic_curve(
+        &t,
+        Vector { x: 0.25, y: 0.50 },
+        Vector { x: 0.50, y: 0.50 },
+        Vector {
+            x: 0.25,
+            y: 0.25 + 0.50 * inverted,
+        },
+    );
+    svg::draw_quadratic_curve(
+        &t,
+        Vector {
+            x: 0.00,
+            y: 0.00 + inverted,
+        },
+        Vector {
+            x: 1.00,
+            y: 0.00 + inverted,
+        },
+        Vector {
+            x: 0.75,
+            y: 0.25 + 0.50 * inverted,
+        }, //75
+    );
+    svg::draw_quadratic_curve(
+        &t,
+        Vector { x: 0.50, y: 0.50 },
+        Vector { x: 0.75, y: 0.50 },
+        Vector { x: 1.50, y: 0.50 },
+    );
+}
 
 fn make_piece(mut t: transform::Transform) {
     let stroke = 0.01;
@@ -38,40 +85,10 @@ fn make_piece(mut t: transform::Transform) {
             v: Vector { x: 0.5, y: 0.5 },
         });
 
-        let mut inverted = 0.0;
-        if i == 2 {
-            inverted = 1.0;
-        }
-        svg::draw_quadratic_curve(
-            &t,
-            Vector { x: 0.25, y: 0.50 },
-            Vector { x: 0.50, y: 0.50 },
-            Vector {
-                x: 0.25,
-                y: 0.25 + 0.50 * inverted,
-            },
-        );
-        svg::draw_quadratic_curve(
-            &t,
-            Vector {
-                x: 0.00,
-                y: 0.00 + inverted,
-            },
-            Vector {
-                x: 1.00,
-                y: 0.00 + inverted,
-            },
-            Vector {
-                x: 0.75,
-                y: 0.25 + 0.50 * inverted,
-            }, //75
-        );
-        svg::draw_quadratic_curve(
-            &t,
-            Vector { x: 0.50, y: 0.50 },
-            Vector { x: 0.75, y: 0.50 },
-            Vector { x: 1.50, y: 0.50 },
-        );
+        let s = transform::Transform {
+            operations: t.operations.clone(),
+        };
+        draw_side_variant(s, i);
     }
 
     svg::path_end("blue", "black", stroke);
@@ -103,7 +120,7 @@ fn main() {
 
     svg::svg_start(width, height);
 
-    let mut t = transform::Transform {
+    let t = transform::Transform {
         operations: vec![
             Operation {
                 kind: transform::Kind::Scale,
