@@ -35,7 +35,7 @@ impl Piece {
 fn draw_side_variant(t: transform::Transform, seed: i32) -> Piece {
     let mut res = Piece::new();
 
-    let salt = 129;
+    let salt = 130;
 
     let mut hasher = DefaultHasher::new();
     (seed + salt).hash(&mut hasher);
@@ -103,7 +103,7 @@ fn draw_side_variant(t: transform::Transform, seed: i32) -> Piece {
 fn make_piece(mut t: transform::Transform) -> Piece {
     let mut res = Piece::new();
 
-    let stroke = 0.01;
+    let stroke = 0.004;
 
     res.add_string(svg::path_begin());
     res.add_string(svg::move_to(&t, Vector { x: 0.00, y: 0.50 }));
@@ -141,19 +141,19 @@ fn make_piece(mut t: transform::Transform) -> Piece {
         res.add(draw_side_variant(s, i));
     }
 
-    res.add_string(svg::path_end("blue", "black", stroke));
+    res.add_string(svg::path_end("darkblue", "black", stroke));
 
     res
 }
 
 fn main() {
-    let width = 1.2;
-    let height = 1.2;
-    let stroke = 0.01;
+    let zoom = 0.5;
+    let width = 1.0 + zoom;
+    let height = 1.0 + zoom;
 
     let mut piece = Piece::new();
 
-    piece.add_string(svg::svg_start(-0.1, -0.1, width, height));
+    piece.add_string(svg::svg_start(-zoom / 2.0, -zoom / 2.0, width, height));
 
     let t = transform::Transform {
         operations: vec![
@@ -179,7 +179,7 @@ fn main() {
             point.y,
             sz,
             sz,
-            stroke,
+            0.01,
             "red",
             i.to_string().as_str(),
         ));
@@ -194,7 +194,8 @@ fn main() {
     //    operations: t.operations.clone(),
     //});
 
-    piece.add_string(svg::draw_box(0.0, 0.0, 1.0, 1.0, stroke, "black"));
+    piece.add_string(svg::draw_box(0.0, 0.0, 1.0, 1.0, 0.01, "black"));
+    piece.add_string(svg::draw_box(0.25, 0.25, 0.5, 0.5, 0.0025, "green"));
 
     piece.add_string(svg::svg_end());
 
