@@ -32,14 +32,13 @@ impl Piece {
     }
 }
 
-fn draw_side_variant(t: transform::Transform, mut seed: i32) -> Piece {
+fn draw_side_variant(t: transform::Transform, seed: i32) -> Piece {
     let mut res = Piece::new();
 
-    let salt = 125;
-    seed += salt;
+    let salt = 129;
 
     let mut hasher = DefaultHasher::new();
-    seed.hash(&mut hasher);
+    (seed + salt).hash(&mut hasher);
     let hash = hasher.finish();
 
     let mut inverted = 0.0;
@@ -47,62 +46,53 @@ fn draw_side_variant(t: transform::Transform, mut seed: i32) -> Piece {
         inverted = 1.0;
     }
 
-    res.add_string(svg::draw_quadratic_curve(
-        &t,
-        Vector { x: 0.25, y: 0.50 },
-        Vector { x: 0.50, y: 0.50 },
+    let mut points = vec![
+        Vector { x: 0.25, y: 0.50 }, // 0
+        Vector { x: 0.50, y: 0.50 }, // 1
         Vector {
             x: 0.25,
             y: 0.25 + 0.50 * inverted,
-        },
-    ));
-
-    res.add_string(svg::draw_quadratic_curve(
-        &t,
+        }, // 2
         Vector {
             x: 0.00,
             y: 0.00 + inverted,
-        },
+        }, // 3
         Vector {
             x: 1.00,
             y: 0.00 + inverted,
-        },
+        }, // 4
         Vector {
             x: 0.75,
             y: 0.25 + 0.50 * inverted,
-        },
+        }, // 5
+        Vector { x: 0.50, y: 0.50 }, // 6
+        Vector { x: 0.75, y: 0.50 }, // 7
+        Vector { x: 1.50, y: 0.50 }, // 8
+    ];
+
+    let skew = Vector { x: 0.2, y: -0.1 };
+    points[1] += skew;
+    points[2] += skew;
+    points[3] += skew;
+    points[4] += skew;
+    points[5] += skew;
+    points[6] += skew;
+
+    res.add_string(svg::draw_quadratic_curve(
+        &t, points[0], points[1], points[2],
     ));
 
     res.add_string(svg::draw_quadratic_curve(
-        &t,
-        Vector { x: 0.50, y: 0.50 },
-        Vector { x: 0.75, y: 0.50 },
-        Vector { x: 1.50, y: 0.50 },
+        &t, points[3], points[4], points[5],
     ));
 
-    res.control_points.append(&mut vec![
-        Vector { x: 0.25, y: 0.50 },
-        Vector { x: 0.50, y: 0.50 },
-        Vector {
-            x: 0.25,
-            y: 0.25 + 0.50 * inverted,
-        },
-        Vector {
-            x: 0.00,
-            y: 0.00 + inverted,
-        },
-        Vector {
-            x: 1.00,
-            y: 0.00 + inverted,
-        },
-        Vector {
-            x: 0.75,
-            y: 0.25 + 0.50 * inverted,
-        },
-        Vector { x: 0.50, y: 0.50 },
-        Vector { x: 0.75, y: 0.50 },
-        Vector { x: 1.50, y: 0.50 },
-    ]);
+    res.add_string(svg::draw_quadratic_curve(
+        &t, points[6], points[7], points[8],
+    ));
+
+    if seed == 0 {
+        res.control_points.append(&mut points);
+    }
 
     res
 }
@@ -154,13 +144,13 @@ fn make_piece(mut t: transform::Transform) -> Piece {
 }
 
 fn main() {
-    let width = 1.01;
-    let height = 1.01;
+    let width = 1.2;
+    let height = 1.2;
     let stroke = 0.01;
 
     let mut piece = Piece::new();
 
-    piece.add_string(svg::svg_start(width, height));
+    piece.add_string(svg::svg_start(-0.1, -0.1, width, height));
 
     let t = transform::Transform {
         operations: vec![
