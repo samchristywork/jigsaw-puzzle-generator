@@ -10,15 +10,16 @@ pub struct Piece {
 }
 
 impl Piece {
-    #[must_use] pub fn new() -> Self {
+    #[must_use]
+    pub const fn new() -> Self {
         Self {
             svg_string: String::new(),
             control_points: Vec::new(),
         }
     }
 
-    pub fn add_string(&mut self, svg_string: String) {
-        self.svg_string += svg_string.as_str();
+    pub fn add_string(&mut self, svg_string: &str) {
+        self.svg_string += svg_string;
     }
 
     pub fn add(&mut self, mut svg_string: Self) {
@@ -27,7 +28,7 @@ impl Piece {
     }
 }
 
-fn draw_side_variant(t: transform::Transform, seed: i32) -> Piece {
+fn draw_side_variant(t: &transform::Transform, seed: u16) -> Piece {
     let mut res = Piece::new();
 
     let salt = 130;
@@ -36,10 +37,7 @@ fn draw_side_variant(t: transform::Transform, seed: i32) -> Piece {
     (seed + salt).hash(&mut hasher);
     let hash = hasher.finish();
 
-    let mut inverted = -1.0;
-    if hash % 2 == 0 {
-        inverted = 1.0;
-    }
+    let inverted = if hash % 2 == 0 { 1.0 } else { -1.0 };
 
     let mut points = vec![
         vector::Vector { x: 0.25, y: 0.50 }, // 0
@@ -76,17 +74,11 @@ fn draw_side_variant(t: transform::Transform, seed: i32) -> Piece {
     points[5] += skew;
     points[6] += skew;
 
-    res.add_string(svg::draw_quadratic_curve(
-        &t, points[0], points[1], points[2],
-    ));
+    res.add_string(svg::draw_quadratic_curve(t, points[0], points[1], points[2]).as_str());
 
-    res.add_string(svg::draw_quadratic_curve(
-        &t, points[3], points[4], points[5],
-    ));
+    res.add_string(svg::draw_quadratic_curve(t, points[3], points[4], points[5]).as_str());
 
-    res.add_string(svg::draw_quadratic_curve(
-        &t, points[6], points[7], points[8],
-    ));
+    res.add_string(svg::draw_quadratic_curve(t, points[6], points[7], points[8]).as_str());
 
     if seed == 0 {
         res.control_points.append(&mut points);
@@ -95,16 +87,17 @@ fn draw_side_variant(t: transform::Transform, seed: i32) -> Piece {
     res
 }
 
-#[must_use] pub fn make_piece(mut t: transform::Transform) -> Piece {
+#[must_use]
+pub fn make(mut t: &mut transform::Transform) -> Piece {
     let mut res = Piece::new();
 
     let stroke = 0.004;
 
-    res.add_string(svg::path_begin());
-    res.add_string(svg::move_to(&t, vector::Vector { x: 0.00, y: 0.50 }));
+    res.add_string(svg::path_begin().as_str());
+    res.add_string(svg::move_to(t, vector::Vector { x: 0.00, y: 0.50 }).as_str());
 
     let oldops = t.operations.clone();
-    for i in 0..4 {
+    for i in 0u16..4 {
         t.operations = oldops.clone();
 
         t.operations.push(transform::Operation {
@@ -115,7 +108,7 @@ fn draw_side_variant(t: transform::Transform, seed: i32) -> Piece {
         t.operations.push(transform::Operation {
             kind: transform::Kind::Rotate,
             v: vector::Vector {
-                x: 3.141 / 2.0 * i as f32,
+                x: std::f32::consts::PI / 2.0 * f32::from(i),
                 y: 0.0,
             },
         });
@@ -133,10 +126,10 @@ fn draw_side_variant(t: transform::Transform, seed: i32) -> Piece {
         let s = transform::Transform {
             operations: t.operations.clone(),
         };
-        res.add(draw_side_variant(s, i));
+        res.add(draw_side_variant(&s, i));
     }
 
-    res.add_string(svg::path_end("darkblue", "black", stroke));
+    res.add_string(svg::path_end("darkblue", "black", stroke).as_str());
 
     res
 }

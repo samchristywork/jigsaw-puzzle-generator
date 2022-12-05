@@ -15,7 +15,7 @@ fn main() {
 
     let mut piece = piece::Piece::new();
 
-    piece.add_string(svg::svg_start(-zoom / 2.0, -zoom / 2.0, width, height));
+    piece.add_string(svg::start(-zoom / 2.0, -zoom / 2.0, width, height).as_str());
 
     let t = transform::Transform {
         operations: vec![
@@ -30,21 +30,24 @@ fn main() {
         ],
     };
 
-    piece.add(piece::make_piece(transform::Transform {
+    piece.add(piece::make(&mut transform::Transform {
         operations: t.operations,
     }));
 
     for (i, point) in piece.control_points.clone().iter().enumerate() {
         let sz = 0.01;
-        piece.add_string(svg::draw_box_with_label(
-            point.x,
-            point.y,
-            sz,
-            sz,
-            0.01,
-            "red",
-            i.to_string().as_str(),
-        ));
+        piece.add_string(
+            svg::draw_box_with_label(
+                point.x,
+                point.y,
+                sz,
+                sz,
+                0.01,
+                "red",
+                i.to_string().as_str(),
+            )
+            .as_str(),
+        );
     }
 
     //t.operations.push(Operation {
@@ -52,17 +55,17 @@ fn main() {
     //    v: Vector { x: 0.05, y: 0.00 },
     //});
 
-    //make_piece(transform::Transform {
+    //make(transform::Transform {
     //    operations: t.operations.clone(),
     //});
 
-    piece.add_string(svg::draw_box(0.0, 0.0, 1.0, 1.0, 0.01, "black"));
-    piece.add_string(svg::draw_box(0.25, 0.25, 0.5, 0.5, 0.0025, "green"));
+    piece.add_string(svg::draw_box(0.0, 0.0, 1.0, 1.0, 0.01, "black").as_str());
+    piece.add_string(svg::draw_box(0.25, 0.25, 0.5, 0.5, 0.0025, "green").as_str());
 
-    piece.add_string(svg::svg_end());
+    piece.add_string(svg::end().as_str());
 
     let filename = "out.svg";
     let mut output =
-        File::create("out.svg").expect(format!("Could not create file {}.", filename).as_str());
+        File::create("out.svg").unwrap_or_else(|_| panic!("Could not create file {}.", filename));
     write!(output, "{}", piece.svg_string).expect("Could not write to file.");
 }
