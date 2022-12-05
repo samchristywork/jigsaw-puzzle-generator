@@ -47,10 +47,10 @@ impl std::ops::Mul for Vector {
 }
 
 impl Vector {
-    pub fn rotate(self, f: f32) -> Self {
-        Vector {
+    #[must_use] pub fn rotate(self, f: f32) -> Self {
+        Self {
             x: self.x * f.cos() - self.y * f.sin(),
-            y: self.y * f.cos() + self.x * f.sin(),
+            y: self.y.mul_add(f.cos(), self.x * f.sin()),
         }
     }
 }

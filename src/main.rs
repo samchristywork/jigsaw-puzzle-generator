@@ -31,7 +31,7 @@ fn main() {
     };
 
     piece.add(piece::make_piece(transform::Transform {
-        operations: t.operations.clone(),
+        operations: t.operations,
     }));
 
     for (i, point) in piece.control_points.clone().iter().enumerate() {

@@ -18,7 +18,7 @@ pub struct Transform {
 }
 
 impl Transform {
-    pub fn apply(&self, mut v: Vector) -> Vector {
+    #[must_use] pub fn apply(&self, mut v: Vector) -> Vector {
         for operation in &self.operations {
             v = match operation.kind {
                 Kind::Offset => v + operation.v,

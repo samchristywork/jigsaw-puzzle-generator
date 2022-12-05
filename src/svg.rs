@@ -12,7 +12,7 @@ fn draw_control_point(x: f32, y: f32) -> String {
     )
 }
 
-pub fn draw_control_points(t: &Transform, mut x: Vector, mut y: Vector, mut z: Vector) -> String {
+#[must_use] pub fn draw_control_points(t: &Transform, mut x: Vector, mut y: Vector, mut z: Vector) -> String {
     x = t.apply(x);
     y = t.apply(y);
     z = t.apply(z);
@@ -33,7 +33,7 @@ pub fn draw_control_points(t: &Transform, mut x: Vector, mut y: Vector, mut z: V
     res
 }
 
-pub fn draw_quadratic_curve(t: &Transform, mut x: Vector, mut y: Vector, mut z: Vector) -> String {
+#[must_use] pub fn draw_quadratic_curve(t: &Transform, mut x: Vector, mut y: Vector, mut z: Vector) -> String {
     x = t.apply(x);
     y = t.apply(y);
     z = t.apply(z);
@@ -47,15 +47,15 @@ pub fn draw_quadratic_curve(t: &Transform, mut x: Vector, mut y: Vector, mut z: 
     format!("C{a},{b} {c},{d} {e},{f} ")
 }
 
-pub fn path_begin() -> String {
-    format!("<path d=\"")
+#[must_use] pub fn path_begin() -> String {
+    "<path d=\"".to_string()
 }
 
-pub fn path_end(fill: &str, stroke: &str, stroke_width: f32) -> String {
+#[must_use] pub fn path_end(fill: &str, stroke: &str, stroke_width: f32) -> String {
     format!("Z\" fill=\"{fill}\" stroke=\"{stroke}\" stroke-width=\"{stroke_width}\" />")
 }
 
-pub fn move_to(t: &Transform, mut v: Vector) -> String {
+#[must_use] pub fn move_to(t: &Transform, mut v: Vector) -> String {
     v = t.apply(v);
 
     let a = v.x;
@@ -64,11 +64,11 @@ pub fn move_to(t: &Transform, mut v: Vector) -> String {
     format!("M{a},{b} ")
 }
 
-pub fn svg_start(x: f32, y: f32, width: f32, height: f32) -> String {
+#[must_use] pub fn svg_start(x: f32, y: f32, width: f32, height: f32) -> String {
     format!("<svg viewBox=\"{x} {y} {width} {height}\" xmlns=\"http://www.w3.org/2000/svg\">")
 }
 
-pub fn line_to(t: &Transform, mut v: Vector) -> String {
+#[must_use] pub fn line_to(t: &Transform, mut v: Vector) -> String {
     v = t.apply(v);
 
     let x = v.x;
@@ -77,14 +77,14 @@ pub fn line_to(t: &Transform, mut v: Vector) -> String {
     format!("L{x}, {y}")
 }
 
-pub fn draw_box(x: f32, y: f32, width: f32, height: f32, stroke: f32, color: &str) -> String {
+#[must_use] pub fn draw_box(x: f32, y: f32, width: f32, height: f32, stroke: f32, color: &str) -> String {
     format!(
         "<path d=\"M{x},{y} l0,{height} l{width},0 l0,-{height} z\" \
         fill=\"none\" stroke=\"{color}\" stroke-width=\"{stroke}\"/>"
     )
 }
 
-pub fn draw_box_with_label(
+#[must_use] pub fn draw_box_with_label(
     x: f32,
     y: f32,
     width: f32,
@@ -100,6 +100,6 @@ pub fn draw_box_with_label(
     )
 }
 
-pub fn svg_end() -> String {
-    format!("</svg>")
+#[must_use] pub fn svg_end() -> String {
+    "</svg>".to_string()
 }

@@ -10,7 +10,7 @@ pub struct Piece {
 }
 
 impl Piece {
-    pub fn new() -> Self {
+    #[must_use] pub fn new() -> Self {
         Self {
             svg_string: String::new(),
             control_points: Vec::new(),
@@ -46,19 +46,19 @@ fn draw_side_variant(t: transform::Transform, seed: i32) -> Piece {
         vector::Vector { x: 0.50, y: 0.50 }, // 1
         vector::Vector {
             x: 0.25,
-            y: 0.50 + 0.25 * inverted,
+            y: 0.25f32.mul_add(inverted, 0.50),
         }, // 2
         vector::Vector {
             x: 0.00,
-            y: 0.50 + 0.50 * inverted,
+            y: 0.50f32.mul_add(inverted, 0.50),
         }, // 3
         vector::Vector {
             x: 1.00,
-            y: 0.50 + 0.50 * inverted,
+            y: 0.50f32.mul_add(inverted, 0.50),
         }, // 4
         vector::Vector {
             x: 0.75,
-            y: 0.50 + 0.25 * inverted,
+            y: 0.25f32.mul_add(inverted, 0.50),
         }, // 5
         vector::Vector { x: 0.50, y: 0.50 }, // 6
         vector::Vector { x: 0.75, y: 0.50 }, // 7
@@ -95,7 +95,7 @@ fn draw_side_variant(t: transform::Transform, seed: i32) -> Piece {
     res
 }
 
-pub fn make_piece(mut t: transform::Transform) -> Piece {
+#[must_use] pub fn make_piece(mut t: transform::Transform) -> Piece {
     let mut res = Piece::new();
 
     let stroke = 0.004;
