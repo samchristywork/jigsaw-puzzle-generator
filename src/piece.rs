@@ -88,13 +88,22 @@ fn draw_side_variant(t: &transform::Transform, seed: u16) -> Piece {
 }
 
 #[must_use]
-pub fn make(mut t: &mut transform::Transform) -> Piece {
+pub fn make(origin: vector::Vector, mut t: &mut transform::Transform) -> Piece {
     let mut res = Piece::new();
 
     let stroke = 0.004;
 
     res.add_string(svg::path_begin().as_str());
-    res.add_string(svg::move_to(t, vector::Vector { x: 0.00, y: 0.50 }).as_str());
+    res.add_string(
+        svg::move_to(
+            t,
+            vector::Vector {
+                x: origin.x * 2.0,
+                y: origin.y * 2.0 + 0.5,
+            },
+        )
+        .as_str(),
+    );
 
     let oldops = t.operations.clone();
     for i in 0u16..4 {
@@ -121,6 +130,11 @@ pub fn make(mut t: &mut transform::Transform) -> Piece {
         t.operations.push(transform::Operation {
             kind: transform::Kind::Offset,
             v: vector::Vector { x: 0.5, y: 0.5 },
+        });
+
+        t.operations.push(transform::Operation {
+            kind: transform::Kind::Offset,
+            v: origin,
         });
 
         let s = transform::Transform {
