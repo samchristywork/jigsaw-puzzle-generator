@@ -61,6 +61,8 @@ fn main() {
 
     piece.add_string(svg::svg_end());
 
-    let mut output = File::create("out.svg").unwrap();
-    write!(output, "{}", piece.svg_string).unwrap();
+    let filename = "out.svg";
+    let mut output =
+        File::create("out.svg").expect(format!("Could not create file {}.", filename).as_str());
+    write!(output, "{}", piece.svg_string).expect("Could not write to file.");
 }
