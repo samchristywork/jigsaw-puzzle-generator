@@ -33,10 +33,7 @@ fn main() {
             };
 
             piece.add(piece::make(
-                vector::Vector {
-                    x: x as f32,
-                    y: y as f32,
-                },
+                (x, y),
                 &mut transform::Transform {
                     operations: t.operations,
                 },

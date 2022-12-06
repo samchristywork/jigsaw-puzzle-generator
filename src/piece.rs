@@ -28,16 +28,29 @@ impl Piece {
     }
 }
 
-fn draw_side_variant(t: &transform::Transform, seedx: i64, seedy: i64, seedi: i64) -> Piece {
+fn draw_side_variant(t: &transform::Transform, seedx: i32, seedy: i32, seedi: u16) -> Piece {
     let mut res = Piece::new();
 
-    let salt = 132;
-
+    let salt = 125;
     let mut hasher = DefaultHasher::new();
-    (salt * seedx * 10 + seedy * 100 * seedi * 1000).hash(&mut hasher);
+    salt.hash(&mut hasher);
+    if seedi == 0 {
+        seedy.hash(&mut hasher);
+    }
+    if seedi == 1 {
+        seedx.hash(&mut hasher);
+    }
+    if seedi == 2 {
+        (seedy - 1).hash(&mut hasher);
+    }
+    if seedi == 3 {
+        (seedx - 1).hash(&mut hasher);
+    }
     let hash = hasher.finish();
-
-    let inverted = if hash % 2 == 0 { 1.0 } else { -1.0 };
+    let mut inverted = if hash % 2 == 0 { 1.0 } else { -1.0 };
+    if seedi == 2 || seedi == 3 {
+        inverted *= -1.0;
+    }
 
     let mut points = vec![
         vector::Vector { x: 0.25, y: 0.50 }, // 0
@@ -86,7 +99,6 @@ fn draw_side_variant(t: &transform::Transform, seedx: i64, seedy: i64, seedi: i6
     points[5] += skew;
     points[6] += skew;
 
-    println!("{:?}", skew);
 
     res.add_string(svg::draw_quadratic_curve(t, points[0], points[1], points[2]).as_str());
 
@@ -102,7 +114,7 @@ fn draw_side_variant(t: &transform::Transform, seedx: i64, seedy: i64, seedi: i6
 }
 
 #[must_use]
-pub fn make(origin: vector::Vector, mut t: &mut transform::Transform) -> Piece {
+pub fn make(origin: (i32, i32), mut t: &mut transform::Transform) -> Piece {
     let mut res = Piece::new();
 
     let stroke = 0.004;
@@ -112,8 +124,8 @@ pub fn make(origin: vector::Vector, mut t: &mut transform::Transform) -> Piece {
         svg::move_to(
             t,
             vector::Vector {
-                x: origin.x * 2.0,
-                y: origin.y * 2.0 + 0.5,
+                x: origin.0 as f32 * 2.0,
+                y: origin.1 as f32 * 2.0 + 0.5,
             },
         )
         .as_str(),
@@ -150,18 +162,16 @@ pub fn make(origin: vector::Vector, mut t: &mut transform::Transform) -> Piece {
 
         t.operations.push(transform::Operation {
             kind: transform::Kind::Offset,
-            v: origin,
+            v: vector::Vector {
+                x: origin.0 as f32,
+                y: origin.1 as f32,
+            },
         });
 
         let s = transform::Transform {
             operations: t.operations.clone(),
         };
-        res.add(draw_side_variant(
-            &s,
-            (origin.x * 1000.0) as i64,
-            (origin.y * 1000.0) as i64,
-            i as i64,
-        ));
+        res.add(draw_side_variant(&s, origin.0, origin.1, i));
     }
 
     res.add_string(svg::path_end("darkblue", "black", stroke).as_str());
