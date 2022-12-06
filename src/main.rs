@@ -9,7 +9,7 @@ use transform::Operation;
 use vector::Vector;
 
 fn main() {
-    let zoom = 3.0;
+    let zoom = 5.0;
     let width = 1.0 + zoom;
     let height = 1.0 + zoom;
 
@@ -17,8 +17,8 @@ fn main() {
 
     piece.add_string(svg::start(-zoom / 2.0, -zoom / 2.0, width, height).as_str());
 
-    for x in -1..2 {
-        for y in -1..2 {
+    for x in -2..3 {
+        for y in -2..3 {
             let t = transform::Transform {
                 operations: vec![
                     Operation {

@@ -28,13 +28,13 @@ impl Piece {
     }
 }
 
-fn draw_side_variant(t: &transform::Transform, seed: u16) -> Piece {
+fn draw_side_variant(t: &transform::Transform, seedx: i64, seedy: i64, seedi: i64) -> Piece {
     let mut res = Piece::new();
 
-    let salt = 130;
+    let salt = 132;
 
     let mut hasher = DefaultHasher::new();
-    (seed + salt).hash(&mut hasher);
+    (salt * seedx * 10 + seedy * 100 * seedi * 1000).hash(&mut hasher);
     let hash = hasher.finish();
 
     let inverted = if hash % 2 == 0 { 1.0 } else { -1.0 };
@@ -74,15 +74,17 @@ fn draw_side_variant(t: &transform::Transform, seed: u16) -> Piece {
     points[5] += skew;
     points[6] += skew;
 
+    println!("{:?}", skew);
+
     res.add_string(svg::draw_quadratic_curve(t, points[0], points[1], points[2]).as_str());
 
     res.add_string(svg::draw_quadratic_curve(t, points[3], points[4], points[5]).as_str());
 
     res.add_string(svg::draw_quadratic_curve(t, points[6], points[7], points[8]).as_str());
 
-    if seed == 0 {
-        res.control_points.append(&mut points);
-    }
+    // if seed == 0 {
+    //     res.control_points.append(&mut points);
+    // }
 
     res
 }
@@ -105,14 +107,16 @@ pub fn make(origin: vector::Vector, mut t: &mut transform::Transform) -> Piece {
         .as_str(),
     );
 
+    println!("Piece {:?}", origin);
+
+    t.operations.push(transform::Operation {
+        kind: transform::Kind::Offset,
+        v: vector::Vector { x: -0.5, y: -0.75 },
+    });
+
     let oldops = t.operations.clone();
     for i in 0u16..4 {
         t.operations = oldops.clone();
-
-        t.operations.push(transform::Operation {
-            kind: transform::Kind::Offset,
-            v: vector::Vector { x: -0.5, y: -0.75 },
-        });
 
         t.operations.push(transform::Operation {
             kind: transform::Kind::Rotate,
@@ -140,7 +144,12 @@ pub fn make(origin: vector::Vector, mut t: &mut transform::Transform) -> Piece {
         let s = transform::Transform {
             operations: t.operations.clone(),
         };
-        res.add(draw_side_variant(&s, i));
+        res.add(draw_side_variant(
+            &s,
+            (origin.x * 1000.0) as i64,
+            (origin.y * 1000.0) as i64,
+            i as i64,
+        ));
     }
 
     res.add_string(svg::path_end("darkblue", "black", stroke).as_str());
