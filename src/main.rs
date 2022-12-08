@@ -40,6 +40,7 @@ fn main() {
                     operations: t.operations,
                 },
                 0.5,
+                width,
             ));
         }
     }

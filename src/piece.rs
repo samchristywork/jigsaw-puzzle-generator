@@ -34,7 +34,13 @@ impl Piece {
     }
 }
 
-fn draw_side_variant(t: &transform::Transform, seedx: i32, seedy: i32, seedi: u16) -> Piece {
+fn draw_side_variant(
+    t: &transform::Transform,
+    seedx: i32,
+    seedy: i32,
+    seedi: u16,
+    border: bool,
+) -> Piece {
     let mut res = Piece::new();
 
     let mut pos = Position { x: seedx, y: seedy };
@@ -56,6 +62,10 @@ fn draw_side_variant(t: &transform::Transform, seedx: i32, seedy: i32, seedi: u1
     let mut inverted = if hash % 2 == 0 { 1.0 } else { -1.0 };
     if seedi == 2 || seedi == 3 {
         inverted *= -1.0;
+    }
+
+    if border {
+        inverted = 0.0;
     }
 
     let mut points = vec![
@@ -110,7 +120,7 @@ fn draw_side_variant(t: &transform::Transform, seedx: i32, seedy: i32, seedi: u1
 }
 
 #[must_use]
-pub fn make(origin: (i32, i32), mut t: &mut transform::Transform, gap: f32) -> Piece {
+pub fn make(origin: (i32, i32), mut t: &mut transform::Transform, gap: f32, width: i32) -> Piece {
     let mut res = Piece::new();
 
     let stroke = 0.004;
@@ -165,7 +175,20 @@ pub fn make(origin: (i32, i32), mut t: &mut transform::Transform, gap: f32) -> P
         let s = transform::Transform {
             operations: t.operations.clone(),
         };
-        res.add(draw_side_variant(&s, origin.0, origin.1, i));
+
+        match (
+            i,
+            origin.0 == -width / 2,
+            origin.0 == width / 2,
+            origin.1 == -width / 2,
+            origin.1 == width / 2,
+        ) {
+            (0, _, _, true, _) => res.add(draw_side_variant(&s, origin.0, origin.1, i, true)),
+            (1, _, true, _, _) => res.add(draw_side_variant(&s, origin.0, origin.1, i, true)),
+            (2, _, _, _, true) => res.add(draw_side_variant(&s, origin.0, origin.1, i, true)),
+            (3, true, _, _, _) => res.add(draw_side_variant(&s, origin.0, origin.1, i, true)),
+            _ => res.add(draw_side_variant(&s, origin.0, origin.1, i, false)),
+        }
     }
 
     res.add_string(svg::path_end("darkblue", "black", stroke).as_str());
