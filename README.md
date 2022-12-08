@@ -12,11 +12,21 @@ pieces is generated.
 ## Example
 
 <div>
-<img alt="Puzzle piece with control points." src="./res/example.svg">
+<img alt="Board made from puzzle pieces." src="./res/board.svg">
+</div>
+
+<div>
+<img alt="Puzzle piece with control points." src="./res/piece.svg">
 </div>
 
 ## Features
 
+- Can create whole boards of puzzle pieces
+- Every piece fits together with the pieces surrounding it
+- Configurable zoom levels and board size
+- Deformation is constrained so that pieces don't have intersecting curves
+- The board has flat borders
+- Amount of space between the pieces is configurable
 - Render differentiated puzzle pieces as SVG
 - Rich composable transformation infrastructure
 - Pieces composed of Bézier curves

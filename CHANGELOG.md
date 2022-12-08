@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.0] - 2022-12-07
+
+- Can create whole boards of puzzle pieces
+- Every piece fits together with the pieces surrounding it
+- Configurable zoom levels and board size
+- Deformation is constrained so that pieces don't have intersecting curves
+- The board has flat borders
+- Amount of space between the pieces is configurable
+
 ## [1.0.0] - 2022-12-03
 
 ### Added
