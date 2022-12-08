@@ -99,7 +99,6 @@ fn draw_side_variant(t: &transform::Transform, seedx: i32, seedy: i32, seedi: u1
     points[5] += skew;
     points[6] += skew;
 
-
     res.add_string(svg::draw_quadratic_curve(t, points[0], points[1], points[2]).as_str());
 
     res.add_string(svg::draw_quadratic_curve(t, points[3], points[4], points[5]).as_str());
