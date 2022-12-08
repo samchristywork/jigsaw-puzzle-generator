@@ -82,17 +82,8 @@ fn draw_side_variant(t: &transform::Transform, seedx: i32, seedy: i32, seedi: u1
         vector::Vector { x: 1.50, y: 0.50 }, // 8
     ];
 
-    let mut hasher = DefaultHasher::new();
-    salt.hash(&mut hasher);
-    seedx.hash(&mut hasher);
-    seedi.hash(&mut hasher);
-    let x = (hasher.finish() % 50) as f32 / 100.0 - 0.25;
-
-    let mut hasher = DefaultHasher::new();
-    salt.hash(&mut hasher);
-    seedy.hash(&mut hasher);
-    seedi.hash(&mut hasher);
-    let y = (hasher.finish() % 50) as f32 / 100.0 - 0.25;
+    let x = ((hash % 30) as f32) / 50.0 - 0.25;
+    let y = ((hash % 15) as f32) / 50.0 - 0.0;
 
     let skew = vector::Vector {
         x: x * inverted,
