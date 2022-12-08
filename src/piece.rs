@@ -113,7 +113,7 @@ fn draw_side_variant(t: &transform::Transform, seedx: i32, seedy: i32, seedi: u1
 }
 
 #[must_use]
-pub fn make(origin: (i32, i32), mut t: &mut transform::Transform) -> Piece {
+pub fn make(origin: (i32, i32), mut t: &mut transform::Transform, gap: f32) -> Piece {
     let mut res = Piece::new();
 
     let stroke = 0.004;
@@ -123,14 +123,12 @@ pub fn make(origin: (i32, i32), mut t: &mut transform::Transform) -> Piece {
         svg::move_to(
             t,
             vector::Vector {
-                x: origin.0 as f32 * 2.0,
-                y: origin.1 as f32 * 2.0 + 0.5,
+                x: origin.0 as f32 * (1.0 + gap),
+                y: origin.1 as f32 * (1.0 + gap) + 0.5,
             },
         )
         .as_str(),
     );
-
-    println!("Piece {:?}", origin);
 
     t.operations.push(transform::Operation {
         kind: transform::Kind::Offset,
@@ -162,8 +160,8 @@ pub fn make(origin: (i32, i32), mut t: &mut transform::Transform) -> Piece {
         t.operations.push(transform::Operation {
             kind: transform::Kind::Offset,
             v: vector::Vector {
-                x: origin.0 as f32,
-                y: origin.1 as f32,
+                x: origin.0 as f32 * (0.5 + gap / 2.0),
+                y: origin.1 as f32 * (0.5 + gap / 2.0),
             },
         });
 

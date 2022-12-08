@@ -39,6 +39,7 @@ fn main() {
                 &mut transform::Transform {
                     operations: t.operations,
                 },
+                0.5,
             ));
         }
     }
