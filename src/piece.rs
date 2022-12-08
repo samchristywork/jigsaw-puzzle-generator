@@ -4,6 +4,12 @@ use crate::vector;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
+#[derive(Clone, Copy, Eq, PartialEq, Hash)]
+pub struct Position {
+    pub x: i32,
+    pub y: i32,
+}
+
 pub struct Piece {
     pub svg_string: String,
     pub control_points: Vec<vector::Vector>,
@@ -31,22 +37,22 @@ impl Piece {
 fn draw_side_variant(t: &transform::Transform, seedx: i32, seedy: i32, seedi: u16) -> Piece {
     let mut res = Piece::new();
 
-    let salt = 125;
-    let mut hasher = DefaultHasher::new();
-    salt.hash(&mut hasher);
-    if seedi == 0 {
-        seedy.hash(&mut hasher);
-    }
+    let mut pos = Position { x: seedx, y: seedy };
+
     if seedi == 1 {
-        seedx.hash(&mut hasher);
+        pos.x += 1;
     }
+
     if seedi == 2 {
-        (seedy - 1).hash(&mut hasher);
+        pos.y += 1;
     }
-    if seedi == 3 {
-        (seedx - 1).hash(&mut hasher);
-    }
+
+    let salt = 123;
+    let mut hasher = DefaultHasher::new();
+    pos.hash(&mut hasher);
+    salt.hash(&mut hasher);
     let hash = hasher.finish();
+
     let mut inverted = if hash % 2 == 0 { 1.0 } else { -1.0 };
     if seedi == 2 || seedi == 3 {
         inverted *= -1.0;
