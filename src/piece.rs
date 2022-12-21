@@ -36,20 +36,20 @@ impl Piece {
 
 fn draw_side_variant(
     t: &transform::Transform,
-    seedx: i32,
-    seedy: i32,
-    seedi: u16,
+    x: i32,
+    y: i32,
+    side_index: u16,
     border: bool,
 ) -> Piece {
     let mut res = Piece::new();
 
-    let mut pos = Position { x: seedx, y: seedy };
+    let mut pos = Position { x, y };
 
-    if seedi == 1 {
+    if side_index == 1 {
         pos.x += 1;
     }
 
-    if seedi == 2 {
+    if side_index == 2 {
         pos.y += 1;
     }
 
@@ -60,7 +60,7 @@ fn draw_side_variant(
     let hash = hasher.finish();
 
     let mut inverted = if hash % 2 == 0 { 1.0 } else { -1.0 };
-    if seedi == 2 || seedi == 3 {
+    if side_index == 2 || side_index == 3 {
         inverted *= -1.0;
     }
 
@@ -131,7 +131,7 @@ pub fn make(origin: (i32, i32), mut t: &mut transform::Transform, gap: f32, widt
             t,
             vector::Vector {
                 x: origin.0 as f32 * (1.0 + gap),
-                y: origin.1 as f32 * (1.0 + gap) + 0.5,
+                y: (origin.1 as f32).mul_add(1.0 + gap, 0.5),
             },
         )
         .as_str(),

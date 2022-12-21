@@ -19,8 +19,8 @@ fn main() {
 
     let width = 9;
 
-    for x in -width / 2..width / 2 + 1 {
-        for y in -width / 2..width / 2 + 1 {
+    for x in (-width / 2)..=(width / 2) {
+        for y in (-width / 2)..=(width / 2) {
             let t = transform::Transform {
                 operations: vec![
                     Operation {
