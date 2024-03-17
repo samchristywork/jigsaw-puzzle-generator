@@ -1,4 +1,4 @@
-![Banner](https://s-christy.com/status-banner-service/jigsaw-puzzle-generator/banner-slim.svg)
+![Banner](https://s-christy.com/sbs/status-banner.svg?icon=action/extension&hue=225&title=Jigsaw%20Puzzle%20Generator&description=Old-fashioned%20jigsaw%20puzzles%2C%20now%20in%20SVG%21)
 
 ## Overview
 
